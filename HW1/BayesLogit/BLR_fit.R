@@ -51,7 +51,6 @@ if (length(args)==0){
 ########################################################################################
 ########################################################################################
 
-mydata<-read.csv('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW1/BayesLogit/data/blr_data_1111.csv',header=T)
 
 
 "bayes.logreg" <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
