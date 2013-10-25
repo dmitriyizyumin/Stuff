@@ -51,7 +51,7 @@ if (length(args)==0){
 ########################################################################################
 ########################################################################################
 
-mydata<-read.csv('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW1/BayesLogit/data/blr_data_1111.csv',header=T)
+#mydata<-read.csv('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW1/BayesLogit/data/blr_data_1111.csv',header=T)
 
 
 "bayes.logreg" <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
@@ -117,12 +117,14 @@ burnin=5000
 # Read data corresponding to appropriate sim_num:
 
 # Extract X and y:
-n<-mydata[,2]
-X<-as.matrix(mydata[,3:4])
-y<-mydata[,1]
+data<-read.table(file=paste0('data/blr_data_',as.character(sim_num),'.csv'),sep=',',header=T)
+
+n<-data[,2]
+X<-data[,3:4]
+y<-data[,1]
 
 # Fit the Bayesian model:
-mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv)
+mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=T)
 
 # Extract posterior quantiles...
 q.beta<-rbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,2],probs=seq(0.01,0.99,0.01)))
