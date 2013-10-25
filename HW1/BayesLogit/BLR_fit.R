@@ -131,7 +131,7 @@ q.beta<-rbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,
 
 
 # Write results to a (99 x p) csv file...
-write.table(x=q.beta,file=paste0('blr_res_',simnum,'.csv'),col.names=F,row.names=F)
+write.table(x=q.beta,file=paste0('results/blr_res_',as.character(sim_num),'.csv'),col.names=F,row.names=F)
 
 # Go celebrate.
  
