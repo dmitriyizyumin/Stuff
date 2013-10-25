@@ -51,7 +51,7 @@ if (length(args)==0){
 ########################################################################################
 ########################################################################################
 
-#mydata<-read.csv('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW1/BayesLogit/data/blr_data_1111.csv',header=T)
+mydata<-read.csv('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW1/BayesLogit/data/blr_data_1111.csv',header=T)
 
 
 "bayes.logreg" <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
@@ -95,8 +95,8 @@ if (length(args)==0){
     
     #retune sigma
     if(retune.times[t]){
-      accept.rates<-accept.num/retune
-      sigma<-sigma*(1 + 0.3*(accept.rates<0.3) - 0.3*(accept.rates>0.6))
+      accept.rates<-accept.nums/retune
+      sigma<-sigma + 0.5*(accept.rates<0.3) - 0.5*(accept.rates>0.6)
       accept.nums<-numeric(2)      
     }
   
@@ -117,11 +117,11 @@ burnin=5000
 # Read data corresponding to appropriate sim_num:
 
 # Extract X and y:
-data<-read.table(file=paste0('data/blr_data_',as.character(sim_num),'.csv'),sep=',',header=T)
+mydata<-read.table(file=paste0('data/blr_data_',as.character(sim_num),'.csv'),sep=',',header=T)
 
-n<-data[,2]
-X<-data[,3:4]
-y<-data[,1]
+n<-mydata[,2]
+X<-as.matrix(mydata[,3:4])
+y<-mydata[,1]
 
 # Fit the Bayesian model:
 mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=T)
@@ -136,6 +136,7 @@ write.table(x=q.beta,file=paste0('results/blr_res_',as.character(sim_num),'.csv'
 # Go celebrate.
  
 cat("done. :)\n")
+
 
 
 
