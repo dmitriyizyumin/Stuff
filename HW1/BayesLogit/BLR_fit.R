@@ -1,3 +1,6 @@
+#Dmitriy Izyumin
+#STA 250
+#FALL 2013
 
 ##
 #
