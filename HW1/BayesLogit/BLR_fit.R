@@ -11,8 +11,6 @@
 #
 ##
 
-library(mvtnorm)
-library(coda)
 
 ########################################################################################
 ########################################################################################
@@ -131,15 +129,12 @@ mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=F)
 # Extract posterior quantiles...
 q.beta<-cbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,2],probs=seq(0.01,0.99,0.01)))
 
-
 # Write results to a (99 x p) csv file...
 write.table(x=q.beta,file=paste0('results/blr_res_',as.character(sim_num),'.csv'),sep=',',col.names=F,row.names=F)
 
 # Go celebrate.
  
 cat("done. :)\n")
-
-
 
 
 
