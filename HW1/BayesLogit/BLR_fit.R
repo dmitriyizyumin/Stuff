@@ -60,6 +60,8 @@ if (length(args)==0){
   sigma<-diag(solve(Sigma.0.inv))
   beta.t<-beta.0
   
+  cat(paste0('The number of parameters is p= ',2))
+  
   total.iter<-burnin+niter
   retune.times<-numeric(total.iter)
   retune.times[seq(from=retune,by=retune,length.out=floor(burnin/retune))]<-1
@@ -80,11 +82,10 @@ if (length(args)==0){
       }
       
       #Accept proposal with probability alpha                                                
-      if(log(runif(1,0,1))<log.alpha){
+      if(log(runif(1))<log.alpha){
         beta.t<-beta.star
         accept.nums[i]<-accept.nums[i]+1
-      }
-                                                           
+      }                                                          
     } #end iteration
     
     #record draws
@@ -95,7 +96,9 @@ if (length(args)==0){
     #retune sigma
     if(retune.times[t]){
       accept.rates<-accept.nums/retune
-      sigma<-sigma + 0.5*(accept.rates<0.3) - 0.5*(accept.rates>0.6)
+      cat(paste("Acceptance rate for beta1 was ",100*round(accept.rates[1],2),"%\n",sep=""))
+      cat(paste("Acceptance rate for beta2 was ",100*round(accept.rates[2],2),"%\n",sep=""))
+      sigma<-sigma * (1 - 0.4*(accept.rates<0.3) + 0.4*(accept.rates>0.6))
       accept.nums<-numeric(2)      
     }
   
@@ -123,7 +126,7 @@ X<-as.matrix(mydata[,3:4])
 y<-mydata[,1]
 
 # Fit the Bayesian model:
-mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=T)
+mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=F)
 
 # Extract posterior quantiles...
 q.beta<-cbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,2],probs=seq(0.01,0.99,0.01)))
