@@ -6,6 +6,7 @@
 rm(list=ls())
 
 # Load in validation functions:
+install.packages('xtable',repos="http://cran.cnr.berkeley.edu/")
 source("validation_funcs.R")
 
 ## Handle batch job arguments:
@@ -108,7 +109,6 @@ cat("\nCoverage table:\n\n")
 print(round(p_table,3))
 
 ## Print latex output in convenient form:
-install.packages('xtable')
 library(xtable)
 
 p_keep <- c(1,5,10,25,50,75,90,95,99)
