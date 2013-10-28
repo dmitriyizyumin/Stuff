@@ -66,7 +66,7 @@ if (length(args)==0){
   retune.times<-numeric(total.iter)
   retune.times[seq(from=retune,by=retune,length.out=floor(burnin/retune))]<-1
   n.accept<-numeric(2)
-  draws<-matrix(NA,nrow=niter,ncol=2)
+  draws<-matrix(NA,nrow=total.iter,ncol=2)
   
   for(t in 1:total.iter){
     
@@ -89,8 +89,8 @@ if (length(args)==0){
     } #end iteration
     
     #record draws
-    if(t>burnin){
-      draws[t-burnin,]<-beta.t
+    if(t){
+      draws[t,]<-beta.t
     }
     
     #retune sigma
@@ -100,13 +100,24 @@ if (length(args)==0){
       for(i in 1:p){
         cat(paste0('Acceptance rate for beta',i,' was ',100*round(accept.rates[i],2),'%\n'))     
       }
-      cat('Variance values of the beta parameters are set to:\n')
-      cat(paste(sigma,'\n'))
       sigma<-sigma * (1 - 0.4*(accept.rates<0.3) + 0.4*(accept.rates>0.6))
-      n.accept<-numeric(p)      
+      n.accept<-numeric(p)
+      
+      if(verbose){
+        cat('Variance values of the beta parameters are set to:\n')
+        cat(paste(sigma,'\n'))
+      }   
+      
+    }
+    
+    if(verbose && t%%retune==0){
+      cat('Variance values of the beta parameters are set to:\n')
+      cat(paste(sigma,'\n'))  
+      
     }
   
   } #end process
+  draws<-draws[-(1:burnin),]
   return(draws)
   
 } #end function bayes.logreg
@@ -117,6 +128,7 @@ beta.0 <- matrix(c(0,0))
 Sigma.0.inv <- diag(rep(1.0,2))
 niter <- 10000
 burnin=5000
+retune=500
 # etc... (more needed here)
 #################################################
 
@@ -130,7 +142,7 @@ X<-as.matrix(mydata[,3:4])
 y<-mydata[,1]
 
 # Fit the Bayesian model:
-mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=T)
+mydraws<-bayes.logreg(n=n,y=y,X=X,beta.0=beta.0,Sigma.0.inv=Sigma.0.inv,burnin=burnin,niter=niter,retune=retune,verbose=T)
 
 # Extract posterior quantiles...
 q.beta<-cbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,2],probs=seq(0.01,0.99,0.01)))
@@ -141,7 +153,6 @@ write.table(x=q.beta,file=paste0('results/blr_res_',sim_num,'.csv'),sep=',',col.
 # Go celebrate.
  
 cat("done. :)\n")
-
 
 
 
