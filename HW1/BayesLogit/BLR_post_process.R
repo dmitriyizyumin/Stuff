@@ -6,7 +6,6 @@
 rm(list=ls())
 
 # Load in validation functions:
-install.packages('xtable',repos="http://cran.cnr.berkeley.edu/")
 source("validation_funcs.R")
 
 ## Handle batch job arguments:
