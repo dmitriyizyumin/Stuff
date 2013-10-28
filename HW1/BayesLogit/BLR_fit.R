@@ -11,6 +11,7 @@
 #
 ##
 
+library(coda)
 
 ########################################################################################
 ########################################################################################
@@ -55,20 +56,21 @@ if (length(args)==0){
                            print.every=1000,retune=100,verbose=TRUE)
 {
   
+  p<-length(beta.0)
   sigma<-diag(solve(Sigma.0.inv))
   beta.t<-beta.0
   
-  cat(paste0('The number of parameters is p= ',2))
+  cat(paste0('The number of parameters is p= ',p))
   
   total.iter<-burnin+niter
   retune.times<-numeric(total.iter)
   retune.times[seq(from=retune,by=retune,length.out=floor(burnin/retune))]<-1
-  accept.nums<-numeric(2)
+  n.accept<-numeric(2)
   draws<-matrix(NA,nrow=niter,ncol=2)
   
   for(t in 1:total.iter){
     
-    for(i in 1:2){  
+    for(i in 1:p){  
       beta.star<-beta.t
       beta.star[i]<-rnorm(1,beta.t[i],sigma[i])
       log.pi.dif<-(t(y)%*%X%*%beta.star-n%*%log(1+exp(X%*%beta.star)))-(t(y)%*%X%*%beta.t-n%*%log(1+exp(X%*%beta.t)))
@@ -82,7 +84,7 @@ if (length(args)==0){
       #Accept proposal with probability alpha                                                
       if(log(runif(1))<log.alpha){
         beta.t<-beta.star
-        accept.nums[i]<-accept.nums[i]+1
+        n.accept[i]<-n.accept[i]+1
       }                                                          
     } #end iteration
     
@@ -93,11 +95,15 @@ if (length(args)==0){
     
     #retune sigma
     if(retune.times[t]){
-      accept.rates<-accept.nums/retune
-      cat(paste("Acceptance rate for beta1 was ",100*round(accept.rates[1],2),"%\n",sep=""))
-      cat(paste("Acceptance rate for beta2 was ",100*round(accept.rates[2],2),"%\n",sep=""))
+      accept.rates<-n.accept/retune
+      cat(paste0('STEPS ',t-retune+1,' THROUGH ',t,':\n'))
+      for(i in 1:p){
+        cat(paste0('Acceptance rate for beta',i,' was ',100*round(accept.rates[i],2),'%\n'))     
+      }
+      cat('Variance values of the beta parameters are set to:\n')
+      cat(paste(sigma,'\n'))
       sigma<-sigma * (1 - 0.4*(accept.rates<0.3) + 0.4*(accept.rates>0.6))
-      accept.nums<-numeric(2)      
+      n.accept<-numeric(p)      
     }
   
   } #end process
@@ -124,17 +130,19 @@ X<-as.matrix(mydata[,3:4])
 y<-mydata[,1]
 
 # Fit the Bayesian model:
-mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=F)
+mydraws<-bayes.logreg(n,y,X,beta.0,Sigma.0.inv,verbose=T)
 
 # Extract posterior quantiles...
 q.beta<-cbind(quantile(mydraws[,1],probs=seq(0.01,0.99,0.01)),quantile(mydraws[,2],probs=seq(0.01,0.99,0.01)))
 
 # Write results to a (99 x p) csv file...
-write.table(x=q.beta,file=paste0('results/blr_res_',as.character(sim_num),'.csv'),sep=',',col.names=F,row.names=F)
+write.table(x=q.beta,file=paste0('results/blr_result_',sim_num,'.csv'),sep=',',col.names=F,row.names=F)
 
 # Go celebrate.
  
 cat("done. :)\n")
+
+
 
 
 
