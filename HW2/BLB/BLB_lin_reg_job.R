@@ -1,5 +1,6 @@
 
 mini <- FALSE
+verbose <- FALSE
 
 #============================== Setup for running on Gauss... ==============================#
 
@@ -29,6 +30,8 @@ if (length(args)==0){
 cat(paste("\nAnalyzing dataset number ",sim_num,"...\n\n",sep=""))
 
 # Find r and s indices:
+s_index<-(sim_num-sim_start-1) %/% 50 + 1
+r_index<-(sim_num-sim_start-1) %% 50 + 1
 
 #============================== Run the simulation study ==============================#
 
@@ -67,25 +70,27 @@ mydata <- attach.big.matrix(dget(descriptorfile),backingpath=datapath)
 
 # Remaining BLB specs:
 n<-nrow(mydata)
-d<-n-1
-s<-5
-r<-50
+d<-ncol(mydata)-1
 gamma<-0.7
+b<-n^gamma
 
 # Extract the subset:
-
+set.seed(s_index*17)
+samp<-mydata[sample(1:n,b),]
 
 # Reset simulation seed:
-
+set.seed(s_index*r_index)
 
 # Bootstrap dataset:
-
+mywts<-as.numeric(rmultinom(1, n, rep(1,b)/b))
 
 # Fit lm:
-
+myfit<-lm(samp[,d+1]~-1+samp[,1:d],weights=mywts)
 
 # Output file:
-
+outfile = paste0("output/","coef_",sprintf("%02d",s_index),"_",sprintf("%02d",r_index),".txt")
 
 # Save estimates to file:
-
+coef<-myfit$coef
+names(coef)<-NULL
+write(coef,ncolumns=d,file=outfile)
