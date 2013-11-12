@@ -53,13 +53,9 @@ if (mini){
 }
 
 # Filenames:
-infilename <- paste0(rootfilename,".txt")
-backingfilename <- paste0(rootfilename,".bin")
 descriptorfilename <- paste0(rootfilename,".desc")
 
 # Set up I/O stuff:
-infile <- paste(datapath,infilename,sep="/")
-backingfile <- paste(datapath,backingfilename,sep="/")
 descriptorfile <- paste(datapath,descriptorfilename,sep="/")
 
 # Attach big.matrix :
