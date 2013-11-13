@@ -89,4 +89,4 @@ outfile = paste0("output/","coef_",sprintf("%02d",s_index),"_",sprintf("%02d",r_
 # Save estimates to file:
 coef<-myfit$coef
 names(coef)<-NULL
-write(coef,ncolumns=d,file=outfile)
+write(coef,ncolumns=1,file=outfile)
