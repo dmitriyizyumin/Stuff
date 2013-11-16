@@ -1,5 +1,6 @@
 
 # Make 2D Histogram:
+setwd('C:/Users/Dmitriy/Documents/GitHub/Stuff/HW2/Streaming')
 
 #res <- read.table("mini_result.txt",sep=",",header=F)
 res <- read.table("full_results.txt",sep=",",header=F)

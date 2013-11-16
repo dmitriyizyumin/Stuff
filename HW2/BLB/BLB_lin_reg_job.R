@@ -1,3 +1,7 @@
+#SCRIPT BLB_lin_reg_job.R
+#DMITRIY IZYUMIN
+#STA250 FALL 2013
+#HW2
 
 mini <- FALSE
 verbose <- FALSE
