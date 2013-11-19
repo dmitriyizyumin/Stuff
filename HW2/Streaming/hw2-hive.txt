@@ -1,0 +1,4 @@
+hive> CREATE TABLE groups_table (a INT, b FLOAT) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TEXTFILE;
+hive> LOAD DATA LOCAL INPATH 'groups.txt' OVERWRITE INTO TABLE groups_table;
+hive> INSERT OVERWRITE LOCAL DIRECTORY 'user/hadoop/groups/'  SELECT avg(b)  FROM groups_table GROUP BY a;
+hive> INSERT OVERWRITE LOCAL DIRECTORY 'user/hadoop/groups/'  SELECT variance(b)  FROM groups_table GROUP BY a;
